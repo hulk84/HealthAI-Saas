@@ -34,7 +34,7 @@ export default function RegisterPage() {
 
     try {
       // Use our API endpoint for registration
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/register-anon', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
