@@ -1,7 +1,13 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ArrowRight, Brain, Heart, Utensils, Activity } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function HomePage() {
+  const { user } = useAuth()
+  const router = useRouter()
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -16,13 +22,22 @@ export default function HomePage() {
             Todo en una plataforma diseñada para transformar tu vida.
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/register" className="btn-primary text-lg px-8 py-3 inline-flex items-center gap-2">
-              Comenzar gratis
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link href="/login" className="btn-secondary text-lg px-8 py-3">
-              Iniciar sesión
-            </Link>
+            {user ? (
+              <Link href="/dashboard" className="btn-primary text-lg px-8 py-3 inline-flex items-center gap-2">
+                Ir al Dashboard
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            ) : (
+              <>
+                <Link href="/register" className="btn-primary text-lg px-8 py-3 inline-flex items-center gap-2">
+                  Comenzar gratis
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link href="/login" className="btn-secondary text-lg px-8 py-3">
+                  Iniciar sesión
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>
