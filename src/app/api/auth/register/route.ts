@@ -4,12 +4,24 @@ import { NextResponse } from 'next/server'
 // This endpoint uses server-side authentication
 export async function POST(request: Request) {
   try {
+    // Check if environment variables are set
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('Missing environment variables:', {
+        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+      })
+      return NextResponse.json(
+        { error: 'Configuración del servidor incompleta. Por favor, contacta al administrador.' },
+        { status: 500 }
+      )
+    }
+
     const { email, password, full_name } = await request.json()
 
     // Create a server-side Supabase client
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!, // Use service role key for admin operations
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY, // Use service role key for admin operations
       {
         cookies: {
           getAll() {
