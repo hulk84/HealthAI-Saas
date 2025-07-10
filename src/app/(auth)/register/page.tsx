@@ -33,30 +33,37 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name,
-          },
+      // Use our API endpoint for registration
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          email,
+          password,
+          full_name: name,
+        }),
       })
 
-      if (signUpError) {
-        console.error('Error de registro:', signUpError)
-        setError(signUpError.message || 'Error al crear la cuenta')
+      const data = await response.json()
+
+      if (!response.ok) {
+        console.error('Error de registro:', data.error)
+        setError(data.error || 'Error al crear la cuenta')
       } else {
-        // Actualizar el perfil con el nombre
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          await supabase
-            .from('profiles')
-            .update({ full_name: name })
-            .eq('id', user.id)
+        // After successful registration, sign in the user
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        if (signInError) {
+          console.error('Error al iniciar sesión:', signInError)
+          setError('Cuenta creada, pero hubo un error al iniciar sesión. Por favor, inicia sesión manualmente.')
+        } else {
+          router.push('/onboarding')
         }
-        
-        router.push('/onboarding')
       }
     } catch (err) {
       setError('Ocurrió un error inesperado')
