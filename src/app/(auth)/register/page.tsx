@@ -44,7 +44,8 @@ export default function RegisterPage() {
       })
 
       if (signUpError) {
-        setError(signUpError.message)
+        console.error('Error de registro:', signUpError)
+        setError(signUpError.message || 'Error al crear la cuenta')
       } else {
         // Actualizar el perfil con el nombre
         const { data: { user } } = await supabase.auth.getUser()
