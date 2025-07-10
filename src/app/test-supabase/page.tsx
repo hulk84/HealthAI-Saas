@@ -8,7 +8,7 @@ export default function TestSupabasePage() {
 
   useEffect(() => {
     // Check environment variables on load
-    setResults(prev => ({
+    setResults((prev: any) => ({
       ...prev,
       env: {
         hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
