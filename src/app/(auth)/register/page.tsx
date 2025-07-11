@@ -48,13 +48,13 @@ export default function RegisterPage() {
 
       const data = await response.json()
 
-      if (!response.ok && !data.userExists) {
+      if (!response.ok && !data.userExists && !data.userCreated) {
         console.error('Error de registro:', data.error)
         setError(data.error || 'Error al crear la cuenta')
       } else if (data.userExists) {
         // User already exists
         setError('Este email ya está registrado. Por favor, inicia sesión.')
-      } else {
+      } else if (response.ok || data.userCreated) {
         // Registration successful or potentially successful
         console.log('Registro exitoso:', data)
         

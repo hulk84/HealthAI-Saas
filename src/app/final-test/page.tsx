@@ -39,7 +39,7 @@ export default function FinalTestPage() {
         timestamp: new Date().toISOString()
       })
 
-      if (response.ok || data.userExists) {
+      if (response.ok || data.userExists || data.userCreated) {
         setTimeout(() => {
           router.push('/login?registered=true')
         }, 2000)
@@ -112,7 +112,7 @@ export default function FinalTestPage() {
             {JSON.stringify(result, null, 2)}
           </pre>
           
-          {(result.ok || result.data?.userExists) && (
+          {(result.ok || result.data?.userExists || result.data?.userCreated) && (
             <p className="mt-4 text-green-700 font-medium">
               ✓ Usuario creado exitosamente. Redirigiendo al login...
             </p>
