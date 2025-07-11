@@ -34,10 +34,10 @@ export async function POST(request: Request) {
       email,
       password,
       options: {
+        data: {
+          full_name: full_name
+        },
         emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://healthai-saas.vercel.app'}/auth/callback`
-      },
-      data: {
-        full_name: full_name
       }
     })
 

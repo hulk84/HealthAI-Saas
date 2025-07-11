@@ -10,7 +10,7 @@ export default function AuthDiagnosticPage() {
 
   useEffect(() => {
     runDiagnostics()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const runDiagnostics = async () => {
     const diagnostics: any = {
