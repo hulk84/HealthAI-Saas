@@ -8,7 +8,13 @@ export async function GET() {
       hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     },
-    tests: []
+    tests: [] as Array<{
+      name: string
+      success: boolean
+      status?: number
+      statusText?: string
+      error?: string
+    }>
   }
 
   // Test 1: Basic connection to Supabase

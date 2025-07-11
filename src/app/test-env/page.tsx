@@ -38,7 +38,7 @@ export default function TestEnvPage() {
           <h3 className="font-bold text-yellow-800 mb-2">Important Notes:</h3>
           <ul className="text-sm text-yellow-700 space-y-1">
             <li>• Environment variables must start with NEXT_PUBLIC_ to be available in the browser</li>
-            <li>• If showing "NOT LOADED", restart the Next.js dev server after adding .env.local</li>
+            <li>• If showing &quot;NOT LOADED&quot;, restart the Next.js dev server after adding .env.local</li>
             <li>• Make sure .env.local file exists in the project root</li>
             <li>• Server-side variables (like SUPABASE_SERVICE_ROLE_KEY) are not accessible here</li>
           </ul>

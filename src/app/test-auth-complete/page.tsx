@@ -15,7 +15,7 @@ export default function TestAuthCompletePage() {
       anonKeyPrefix: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 30) || 'NOT SET',
       timestamp: new Date().toISOString()
     }
-    setResults(prev => ({ ...prev, envCheck }))
+    setResults((prev: any) => ({ ...prev, envCheck }))
   }, [])
 
   const testSupabaseClient = async () => {
@@ -27,7 +27,7 @@ export default function TestAuthCompletePage() {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
       
       // Test 2: Check auth settings
-      const authSettings = {
+      const authSettings: any = {
         sessionCheck: {
           hasSession: !!sessionData?.session,
           error: sessionError?.message || null
@@ -42,18 +42,18 @@ export default function TestAuthCompletePage() {
         }
       })
 
-      authSettings['oauthTest'] = {
+      authSettings.oauthTest = {
         gotUrl: !!url,
         error: urlError?.message || null
       }
 
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         supabaseClient: authSettings,
         timestamp: new Date().toISOString()
       }))
     } catch (error: any) {
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         supabaseClient: { error: error.message }
       }))
@@ -68,13 +68,13 @@ export default function TestAuthCompletePage() {
       const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
       if (!url || !key) {
-        setResults(prev => ({ ...prev, directAPI: { error: 'Missing environment variables' } }))
+        setResults((prev: any) => ({ ...prev, directAPI: { error: 'Missing environment variables' } }))
         setLoading(false)
         return
       }
 
       // Test different endpoints
-      const tests = []
+      const tests: any[] = []
 
       // 1. Test REST API
       const restResponse = await fetch(`${url}/rest/v1/`, {
@@ -120,13 +120,13 @@ export default function TestAuthCompletePage() {
         data: authSettings
       })
 
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         directAPI: { tests },
         timestamp: new Date().toISOString()
       }))
     } catch (error: any) {
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         directAPI: { error: error.message }
       }))
@@ -159,13 +159,13 @@ export default function TestAuthCompletePage() {
         } : null
       }
 
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         registration: registrationResult,
         timestamp: new Date().toISOString()
       }))
     } catch (error: any) {
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         registration: { error: error.message, stack: error.stack }
       }))

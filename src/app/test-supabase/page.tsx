@@ -27,7 +27,7 @@ export default function TestSupabasePage() {
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
       if (!supabaseUrl || !supabaseKey) {
-        setResults(prev => ({ ...prev, directApi: { error: 'Environment variables not loaded' } }))
+        setResults((prev: any) => ({ ...prev, directApi: { error: 'Environment variables not loaded' } }))
         setLoading(false)
         return
       }
@@ -87,7 +87,7 @@ export default function TestSupabasePage() {
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
       if (!supabaseUrl || !supabaseKey) {
-        setResults(prev => ({ ...prev, testKey: { error: 'Environment variables not loaded' } }))
+        setResults((prev: any) => ({ ...prev, testKey: { error: 'Environment variables not loaded' } }))
         setLoading(false)
         return
       }
