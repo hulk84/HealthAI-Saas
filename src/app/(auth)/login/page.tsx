@@ -28,17 +28,29 @@ function LoginForm() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Usar directamente nuestro endpoint que funciona
+      const response = await fetch('/api/auth/login-direct', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       })
-
-      if (error) {
-        setError(error.message)
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        setError(data.error || 'Error al iniciar sesión')
       } else {
+        // Login exitoso - guardar en localStorage para AuthContext
+        localStorage.setItem('healthai-user', JSON.stringify(data.user))
+        
+        // Redirigir al dashboard
         router.push('/dashboard')
+        router.refresh()
       }
     } catch (err) {
+      console.error('Login error:', err)
       setError('Ocurrió un error inesperado')
     } finally {
       setLoading(false)

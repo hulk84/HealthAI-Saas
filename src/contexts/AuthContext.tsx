@@ -70,11 +70,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check active session
     const checkUser = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
+        // Primero verificar localStorage
+        const storedUser = localStorage.getItem('healthai-user')
         
-        if (session?.user) {
-          setUser(session.user)
-          await fetchProfile(session.user.id)
+        if (storedUser) {
+          const userData = JSON.parse(storedUser)
+          // Crear objeto User compatible
+          const user: User = {
+            id: userData.id,
+            email: userData.email || '',
+            app_metadata: {},
+            user_metadata: { full_name: userData.full_name },
+            aud: 'authenticated',
+            created_at: userData.created_at || new Date().toISOString()
+          } as User
+          
+          setUser(user)
+          await fetchProfile(userData.id)
+        } else {
+          // Si no hay usuario guardado, intentar con Supabase
+          const { data: { session } } = await supabase.auth.getSession()
+          
+          if (session?.user) {
+            setUser(session.user)
+            await fetchProfile(session.user.id)
+          }
         }
       } catch (error) {
         console.error('Error checking session:', error)
@@ -89,16 +109,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription }
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        setUser(session.user)
-        await fetchProfile(session.user.id)
-      } else {
+      if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('healthai-user')
         setUser(null)
         setProfile(null)
-      }
-      
-      if (event === 'SIGNED_OUT') {
         router.push('/login')
+      } else if (session?.user) {
+        setUser(session.user)
+        await fetchProfile(session.user.id)
       }
     })
 
@@ -109,12 +127,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      // Limpiar localStorage
+      localStorage.removeItem('healthai-user')
+      
+      // Intentar cerrar sesión en Supabase también
       await supabase.auth.signOut()
+      
       setUser(null)
       setProfile(null)
       router.push('/login')
     } catch (error) {
       console.error('Error signing out:', error)
+      // Aunque falle Supabase, limpiamos el estado local
+      localStorage.removeItem('healthai-user')
+      setUser(null)
+      setProfile(null)
+      router.push('/login')
     }
   }
 
