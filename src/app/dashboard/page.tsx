@@ -1,11 +1,11 @@
 'use client'
 
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/contexts/AuthContext'
 import { Activity, Brain, Heart, Utensils, LogOut, MessageSquare, Calendar } from 'lucide-react'
 import Link from 'next/link'
 
 export default function DashboardPage() {
-  const { user, loading, signOut } = useAuth()
+  const { user, profile, loading, signOut } = useAuth()
 
   if (loading) {
     return (
@@ -25,7 +25,7 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">HealthAI Dashboard</h1>
           <div className="flex items-center gap-4">
-            <span className="text-gray-600">Hola, {user?.email}</span>
+            <span className="text-gray-600">Hola, {profile?.full_name || user?.email}</span>
             <button
               onClick={signOut}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
