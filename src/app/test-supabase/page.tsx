@@ -23,10 +23,19 @@ export default function TestSupabasePage() {
     setLoading(true)
     try {
       // Test 1: Check if API is accessible
-      const healthResponse = await fetch('https://fulxozhozkeovsdvwjbl.supabase.co/rest/v1/', {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (!supabaseUrl || !supabaseKey) {
+        setResults(prev => ({ ...prev, directApi: { error: 'Environment variables not loaded' } }))
+        setLoading(false)
+        return
+      }
+      
+      const healthResponse = await fetch(`${supabaseUrl}/rest/v1/`, {
         headers: {
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`
         }
       })
 
@@ -37,10 +46,10 @@ export default function TestSupabasePage() {
       }
 
       // Test 2: Try auth endpoint
-      const authResponse = await fetch('https://fulxozhozkeovsdvwjbl.supabase.co/auth/v1/signup', {
+      const authResponse = await fetch(`${supabaseUrl}/auth/v1/signup`, {
         method: 'POST',
         headers: {
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          'apikey': supabaseKey,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -74,13 +83,19 @@ export default function TestSupabasePage() {
   const testWithDifferentKey = async () => {
     setLoading(true)
     try {
-      // Try with the exact key from the error message
-      const testKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1bHhvemhvemtlb3ZzZHZ3amJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTM4MjQsImV4cCI6MjA2NzY2OTgyNH0.UWsV9DGCE-_pYRO_N2sdohmP5aAdFFl_BFdCnU_jvZE'
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
-      const response = await fetch('https://fulxozhozkeovsdvwjbl.supabase.co/auth/v1/signup', {
+      if (!supabaseUrl || !supabaseKey) {
+        setResults(prev => ({ ...prev, testKey: { error: 'Environment variables not loaded' } }))
+        setLoading(false)
+        return
+      }
+      
+      const response = await fetch(`${supabaseUrl}/auth/v1/signup`, {
         method: 'POST',
         headers: {
-          'apikey': testKey,
+          'apikey': supabaseKey,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -95,7 +110,7 @@ export default function TestSupabasePage() {
         hardcodedKeyTest: {
           status: response.status,
           data: data,
-          keyUsed: testKey.substring(0, 50) + '...'
+          keyUsed: supabaseKey.substring(0, 50) + '...'
         }
       })
     } catch (error: any) {
@@ -141,7 +156,7 @@ export default function TestSupabasePage() {
       <div className="mt-6 card bg-blue-50">
         <h3 className="font-bold mb-2">Información de Debug:</h3>
         <ul className="text-sm space-y-1">
-          <li>• URL del proyecto: https://fulxozhozkeovsdvwjbl.supabase.co</li>
+          <li>• URL del proyecto: {process.env.NEXT_PUBLIC_SUPABASE_URL || 'No configurada'}</li>
           <li>• La API key debe empezar con: eyJhbGciOiJIUzI1NiI...</li>
           <li>• Si ves status 401 = Invalid API key</li>
           <li>• Si ves status 400 = Error en los datos (email, password, etc.)</li>

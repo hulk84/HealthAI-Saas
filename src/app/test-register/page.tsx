@@ -86,11 +86,24 @@ export default function TestRegisterPage() {
     setResult(null)
     
     try {
-      const response = await fetch('https://fulxozhozkeovsdvwjbl.supabase.co/auth/v1/signup', {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (!supabaseUrl || !supabaseKey) {
+        setResult({
+          success: false,
+          error: { message: 'Environment variables not loaded' },
+          timestamp: new Date().toISOString()
+        })
+        setLoading(false)
+        return
+      }
+      
+      const response = await fetch(`${supabaseUrl}/auth/v1/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          'apikey': supabaseKey,
         },
         body: JSON.stringify({
           email,
