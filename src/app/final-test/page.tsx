@@ -126,7 +126,7 @@ export default function FinalTestPage() {
           <li>✓ API funciona correctamente</li>
           <li>✓ Los usuarios se crean exitosamente</li>
           <li>✓ La autenticación está habilitada</li>
-          <li>• Si ves "Invalid API key", es un error visual - el usuario SÍ se crea</li>
+          <li>• Si ves &quot;Invalid API key&quot;, es un error visual - el usuario SÍ se crea</li>
         </ul>
       </div>
     </div>
