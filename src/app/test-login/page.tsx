@@ -155,7 +155,7 @@ export default function TestLoginPage() {
           <li>• La contraseña por defecto es: testpassword123</li>
           <li>• Si no conoces la contraseña, tendrás que resetearla</li>
           <li>• Verifica que el email coincida exactamente</li>
-          <li>• Los usuarios creados con error "Invalid API key" SÍ existen</li>
+          <li>• Los usuarios creados con error &quot;Invalid API key&quot; SÍ existen</li>
         </ul>
       </div>
     </div>

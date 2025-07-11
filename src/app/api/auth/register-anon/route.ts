@@ -67,7 +67,7 @@ export async function POST(request: Request) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              user_id: data?.user?.id || '',
+              user_id: (data as any)?.user?.id || '',
               full_name: full_name || email.split('@')[0]
             })
           })

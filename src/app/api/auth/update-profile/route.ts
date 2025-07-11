@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // First check if profile exists
     const { data: existingProfile, error: checkError } = await supabase
