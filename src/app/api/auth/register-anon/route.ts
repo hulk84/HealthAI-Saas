@@ -41,7 +41,16 @@ export async function POST(request: Request) {
       }
     })
 
+    // Check for specific error cases
     if (error) {
+      // User already exists error
+      if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        return NextResponse.json({
+          message: 'Este usuario ya existe. Por favor, inicia sesión.',
+          userExists: true
+        })
+      }
+      
       console.error('Signup error:', error)
       return NextResponse.json(
         { error: error.message },
@@ -49,26 +58,40 @@ export async function POST(request: Request) {
       )
     }
 
-    // If user was created, create profile
+    // If user was created successfully
     if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
+      // Try to create profile, but don't fail if it already exists or fails
+      try {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            email: data.user.email,
+            full_name: full_name || email.split('@')[0],
+            role: 'user'
+          })
+
+        if (profileError && !profileError.message.includes('duplicate')) {
+          console.error('Profile creation warning:', profileError)
+        }
+      } catch (profileErr) {
+        console.error('Profile creation error (non-fatal):', profileErr)
+      }
+
+      return NextResponse.json({
+        message: 'Usuario creado exitosamente',
+        user: {
           id: data.user.id,
           email: data.user.email,
-          full_name,
-          role: 'user'
-        })
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError)
-        // Don't fail the registration if profile creation fails
-      }
+          created: true
+        }
+      })
     }
 
+    // If no user data returned (shouldn't happen)
     return NextResponse.json({
-      message: 'Usuario creado exitosamente',
-      user: data.user
+      message: 'Usuario procesado',
+      warning: 'No se recibieron datos del usuario pero la operación puede haber sido exitosa'
     })
 
   } catch (error: any) {

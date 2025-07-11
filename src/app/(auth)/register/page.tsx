@@ -48,10 +48,16 @@ export default function RegisterPage() {
 
       const data = await response.json()
 
-      if (!response.ok) {
+      if (!response.ok && !data.userExists) {
         console.error('Error de registro:', data.error)
         setError(data.error || 'Error al crear la cuenta')
+      } else if (data.userExists) {
+        // User already exists
+        setError('Este email ya está registrado. Por favor, inicia sesión.')
       } else {
+        // Registration successful or potentially successful
+        console.log('Registro exitoso:', data)
+        
         // After successful registration, sign in the user
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
@@ -60,7 +66,8 @@ export default function RegisterPage() {
 
         if (signInError) {
           console.error('Error al iniciar sesión:', signInError)
-          setError('Cuenta creada, pero hubo un error al iniciar sesión. Por favor, inicia sesión manualmente.')
+          // Still redirect to login since account was created
+          router.push('/login?registered=true')
         } else {
           router.push('/onboarding')
         }
