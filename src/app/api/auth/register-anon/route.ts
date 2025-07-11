@@ -54,7 +54,30 @@ export async function POST(request: Request) {
       // Handle the false "Invalid API key" error
       if (error.message === 'Invalid API key') {
         console.log('Got "Invalid API key" error - but user is likely created successfully')
-        // Return success because we know users are being created despite this error
+        // Users are being created despite this error
+        // Try to update the profile with the full name
+        try {
+          // We need to wait a moment for the user to be created
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          
+          // Now try to update the profile
+          const profileResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/update-profile`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              user_id: data?.user?.id || '',
+              full_name: full_name || email.split('@')[0]
+            })
+          })
+          
+          const profileData = await profileResponse.json()
+          console.log('Profile update result:', profileData)
+        } catch (profileErr) {
+          console.error('Failed to update profile after registration:', profileErr)
+        }
+        
         return NextResponse.json({
           message: 'Usuario creado exitosamente',
           userCreated: true,
@@ -71,22 +94,21 @@ export async function POST(request: Request) {
 
     // If user was created successfully
     if (data.user) {
-      // Try to create profile, but don't fail if it already exists or fails
+      // The trigger should have created the profile, but let's update the full_name
+      // in case it wasn't set properly
       try {
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email,
-            full_name: full_name || email.split('@')[0],
-            role: 'user'
+          .update({
+            full_name: full_name || email.split('@')[0]
           })
+          .eq('user_id', data.user.id)
 
-        if (profileError && !profileError.message.includes('duplicate')) {
-          console.error('Profile creation warning:', profileError)
+        if (profileError) {
+          console.error('Profile update warning:', profileError)
         }
       } catch (profileErr) {
-        console.error('Profile creation error (non-fatal):', profileErr)
+        console.error('Profile update error (non-fatal):', profileErr)
       }
 
       return NextResponse.json({
